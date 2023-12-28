@@ -9,6 +9,8 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import styles from "./globals.css";
+import MainNavigation from "./components/layout/MainNavigation";
+import Welcome from "./components/Welcome";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -27,6 +29,8 @@ export default function App() {
       <body>
         <main className="bg-background text-foreground dark h-screen">
           <div className="container">
+            <Welcome/>
+            <MainNavigation />
             <Outlet />
             <ScrollRestoration />
             <Scripts />
