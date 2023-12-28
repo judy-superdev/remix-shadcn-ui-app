@@ -1,6 +1,6 @@
 import { type MetaFunction } from "@remix-run/node";
 import { FC } from "react";
-import DashboardHeader from "../components/dashboard/DashboardHeader";
+import DashboardPage from "../components/dashboard/DashboardPage";
 
 // SEO
 export const meta: MetaFunction = () => {
@@ -12,9 +12,7 @@ export const meta: MetaFunction = () => {
 
 const Dashboard: FC = () => {
   return (
-    <div className="overflow-hidden rounded-[0.5rem] border bg-background shadow-md md:shadow-xl">
-        <DashboardHeader/>
-    </div>
+    <DashboardPage />
   );
 };
 
