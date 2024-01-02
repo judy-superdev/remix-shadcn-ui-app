@@ -46,8 +46,8 @@ const MainNavigation: FC = () => {
     <div className="my-3">
       <NavigationMenu>
         <NavigationMenuList>
-          {menuItems.map((item) => (
-            <NavigationMenuItem>
+          {menuItems.map((item, itemIndex) => (
+            <NavigationMenuItem key={itemIndex}>
               <NavLink to={item.to} className={navClasses}>
                 {item.title}
               </NavLink>
