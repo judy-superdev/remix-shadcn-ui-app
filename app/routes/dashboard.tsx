@@ -12,14 +12,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-
-export const loader = async () => {
-  const teams = await getTeams();
-  return json({ teams });
-};
 const Dashboard: FC = () => {
-  const { teams } = useLoaderData<typeof loader>();
-  console.log({teams})
   return (
     <DashboardPage />
   );
