@@ -44,32 +44,8 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-const groups = [
-  {
-    label: "Personal Account",
-    teams: [
-      {
-        label: "Alicia Koch",
-        value: "personal",
-      },
-    ],
-  },
-  {
-    label: "Teams",
-    teams: [
-      {
-        label: "Acme Inc.",
-        value: "acme-inc",
-      },
-      {
-        label: "Monsters Inc.",
-        value: "monsters",
-      },
-    ],
-  },
-];
-
-type Team = (typeof groups)[number]["teams"][number];
+import { Form, useSubmit } from "@remix-run/react";
+import { Team, DashboardContext } from "~/store/dashboard-context";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -78,11 +54,14 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 interface TeamSwitcherProps extends PopoverTriggerProps {}
 
 export default function TeamSwitcher({ className }: TeamSwitcherProps) {
+  const { groups, addToTeams } = React.useContext(DashboardContext);
   const [open, setOpen] = React.useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
   const [selectedTeam, setSelectedTeam] = React.useState<Team>(
     groups[0].teams[0]
   );
+  const submit = useSubmit();
+  const formRef = React.useRef<HTMLFormElement>(null);
 
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
@@ -112,8 +91,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             <CommandList>
               <CommandInput placeholder="Search team..." />
               <CommandEmpty>No team found.</CommandEmpty>
-              {groups.map((group) => (
-                <CommandGroup key={group.label} heading={group.label}>
+              {groups.map((group, groupIndex) => (
+                <CommandGroup key={groupIndex} heading={group.label}>
                   {group.teams.map((team) => (
                     <CommandItem
                       key={team.value}
@@ -164,49 +143,70 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
           </Command>
         </PopoverContent>
       </Popover>
+
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create team</DialogTitle>
-          <DialogDescription>
-            Add a new team to manage products and customers.
-          </DialogDescription>
-        </DialogHeader>
-        <div>
-          <div className="space-y-4 py-2 pb-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Team name</Label>
-              <Input id="name" placeholder="Acme Inc." />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="plan">Subscription plan</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a plan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="free">
-                    <span className="font-medium">Free</span> -{" "}
-                    <span className="text-muted-foreground">
-                      Trial for two weeks
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="pro">
-                    <span className="font-medium">Pro</span> -{" "}
-                    <span className="text-muted-foreground">
-                      $9/month per user
-                    </span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+        <Form
+          id="contact-form"
+          method="post"
+          ref={formRef}
+          onSubmit={() => {
+            setShowNewTeamDialog(() => false);
+            const formData = new FormData(formRef.current as HTMLFormElement);
+            const payload = {
+              name: formData.get("name"),
+              plan: formData.get("plan"),
+            };
+            addToTeams(payload);
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle>Create team</DialogTitle>
+            <DialogDescription>
+              Add a new team to manage products and customers.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div>
+            <div className="space-y-4 py-2 pb-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Team name</Label>
+                <Input id="name" placeholder="Acme Inc." name="name" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="plan">Subscription plan</Label>
+                <Select name="plan">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a plan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="free">
+                      <span className="font-medium">Free</span> -{" "}
+                      <span className="text-muted-foreground">
+                        Trial for two weeks
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="pro">
+                      <span className="font-medium">Pro</span> -{" "}
+                      <span className="text-muted-foreground">
+                        $9/month per user
+                      </span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setShowNewTeamDialog(false)}>
-            Cancel
-          </Button>
-          <Button type="submit">Continue</Button>
-        </DialogFooter>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowNewTeamDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">Continue</Button>
+          </DialogFooter>
+        </Form>
       </DialogContent>
     </Dialog>
   );
