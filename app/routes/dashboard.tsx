@@ -1,8 +1,18 @@
-import { json, type MetaFunction } from "@remix-run/node";
-import { FC } from "react";
+import {
+  json,
+  type LoaderFunctionArgs,
+  type MetaFunction,
+} from "@remix-run/node";
+import { FC, useState, useEffect } from "react";
 import DashboardPage from "../components/dashboard/DashboardPage";
-import { getTeams } from "../components/dashboard/data";
 import { useLoaderData } from "@remix-run/react";
+import { DashboardContextProvider } from "~/store/dashboard-context";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url);
+  const q = url.searchParams.get("q");
+  return json({ q });
+};
 
 // SEO
 export const meta: MetaFunction = () => {
@@ -14,7 +24,9 @@ export const meta: MetaFunction = () => {
 
 const Dashboard: FC = () => {
   return (
-    <DashboardPage />
+    <DashboardContextProvider>
+      <DashboardPage />
+    </DashboardContextProvider>
   );
 };
 
