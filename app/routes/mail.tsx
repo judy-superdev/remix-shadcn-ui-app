@@ -1,4 +1,4 @@
-import { json, type MetaFunction } from "@remix-run/node";
+import { type MetaFunction } from "@remix-run/node";
 import { FC } from "react";
 import MailPage from "../components/mail/page";
 
