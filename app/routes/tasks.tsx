@@ -31,7 +31,6 @@ export const loader = async () => {
 
 const Tasks: FC = () => {
   const { tasks } = useLoaderData<typeof loader>();
-
   return <>{tasks.length > 0 && <TaskPage tasks={tasks} />}</>;
 };
 
